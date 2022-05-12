@@ -93,8 +93,8 @@ class TestProduct (ShopAPITestCase):
         #de créer une nouvelle catégorie
         self.assertEqual(response.status_code, 405)
         #Enfin, vérifions qu'aucune nouvelle catégorie n'a été créer malgré
-        #le statys code 405
-        #self.assertFalse(Product.objects.exists())
+        #le status code 405
+        # self.assertFalse(Product.objects.exists())
 
         product_count = Product.objects.count()
         self.assertEqual(Product.objects.count(), product_count)
