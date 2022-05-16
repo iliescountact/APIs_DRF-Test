@@ -40,7 +40,7 @@ class Product(models.Model):
     @transaction.atomic
     def disable(self):
         if self.active is False:
-        # Ne faisons rien si la catégorie est déjà désactivée
+        # Ne faisons rien si le produit est déjà désactivé
             return
         self.active = False
         self.save()
