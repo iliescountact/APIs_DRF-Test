@@ -28,7 +28,21 @@ class ProductDetailSerializer(ModelSerializer):
 class CategoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'active']
+        fields = ['id', 'name', 'active', 'description']
+
+    def validate_name(self,  value):
+        #nous vérifions que la catégorie existe
+        if Category.objects.filter(name=value).exists():
+        #En cas d'erreur, DRF nous met à disposition l'exception ValidationError
+            raise serializers.ValidationError("Category already exists")
+        return value
+
+    def validate (self, data):
+    #cette fonction fait le controle de la présence du nom dans la description
+        if data['name'] not in data['description']:
+        # On fait apparaitre une ValidationError si ce n'est pas le cas
+            raise serializers.ValidationError("Name Must be in description")
+        return data
 
 
 class CategoryDetailSerializer(serializers.ModelSerializer):

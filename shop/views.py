@@ -8,15 +8,30 @@ from shop.models import Category, Product, Article
 from shop.serializers import CategoryListSerializer,CategoryDetailSerializer, ArticleSerializer
 from shop.serializers import ProductListSerializer,ProductDetailSerializer
 
-class CategoryViewset(ReadOnlyModelViewSet):
+class MultipleSerializerMixin:
+    # Un mixin est une classe qui ne fonctionne pas de façon autonome
+    # Elle permet d'ajouter des fonctionnalités aux classes qui les étendent
+
+    detail_serializer_class = None
+
+    def get_serializer_class(self):
+        # Notre mixin détermine quel serializer à utiliser
+        # même si elle ne sait pas ce que c'est ni comment l'utiliser
+        if self.action == 'retrieve' and self.detail_serializer_class is not None:
+            # Si l'action demandée est le détail alors nous retournons le serializer de détail
+            return self.detail_serializer_class
+        return super().get_serializer_class()
+
+
+class AdminCategoryViewset(MultipleSerializerMixin, ModelViewSet):
     serializer_class = CategoryListSerializer
     #Ajoutons un attribut de classe qui nous permet de définir notre sérializer
     # de détail
     detail_serializer_class = CategoryDetailSerializer
 
     def get_queryset(self):
-        #return Category.objects.all()
-        return Category.objects.filter(active=True)
+        return Category.objects.all()
+        # return Category.objects.filter(active=True)
 
     def get_serializer_class(self):
         # Si l'action retourné est un retrieve, alors on retourne le
@@ -90,7 +105,7 @@ class ProductViewset(ReadOnlyModelViewSet):
         return Response()
 
 
-class ArticleViewset(ModelViewSet):
+class ArticleViewset(ReadOnlyModelViewSet):
     serializer_class = ArticleSerializer
 
     def get_queryset(self):

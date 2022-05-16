@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from shop.views import CategoryViewset
+from shop.views import AdminCategoryViewset
 
 from shop.views import ProductViewset
 
@@ -12,7 +12,7 @@ from shop.views import ArticleViewset
 router_category=routers.SimpleRouter()
 #On déclare enseuile une url basée sur le mot clé "category" et notre
 #View afin que l'URL généré soit celle que nous souhaitons 'api/category'/
-router_category.register('category', CategoryViewset, basename='category')
+router_category.register('admin/category', AdminCategoryViewset, basename='admin-category')
 
 #On crée notre router pour la classe Product ici
 router_product=routers.SimpleRouter()

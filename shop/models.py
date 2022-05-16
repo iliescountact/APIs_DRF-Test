@@ -7,6 +7,7 @@ class Category(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
     active = models.BooleanField(default=False)
 
     def __str__(self):
