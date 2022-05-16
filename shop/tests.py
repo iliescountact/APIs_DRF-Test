@@ -17,7 +17,7 @@ class TestCategory (APITestCase) :
         #cette méthode créer les deux catégories pour celle active et
         #une non-active
         category = Category.objects.create(name='Fruits', active=True)
-        # category_empty = Category.objects.create(name='Légumes', active=False)
+        category_empty = Category.objects.create(name='Légumes', active=False)
 
         #on réalise l'appel en GET en utilisant le client de la classe de
         #tests

@@ -7,7 +7,7 @@ from shop.models import Article
 class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name", "date_created", "date_updated", "active"]
+        fields = ["active", "date_created", "date_updated","id", "name"]
 
 class ProductSerializer(ModelSerializer):
     class Meta:
