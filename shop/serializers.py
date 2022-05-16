@@ -17,7 +17,7 @@ class ProductListSerializer(ModelSerializer):
 class ProductDetailSerializer(ModelSerializer):
     # Nous redéfinissons l'attribut 'product' qui porte le même nom que dans
     # la liste des champs à afficher
-    # en lui précisant un serializer paramétré à 'many=rue' car les produits
+    # en lui précisant un serializer paramétré à 'many=True' car les produits
     # sont multiples pour une catégorie
     articles = ArticleSerializer(many=True)
     class Meta:
