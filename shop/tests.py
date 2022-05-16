@@ -28,9 +28,10 @@ class ShopAPITestCase (APITestCase):
             {
                 'id': article.id,
                 'name': article.name,
+                'active': article.active
                 # 'date_created': self.format_datetime(article.date_created),
                 # 'date_updated': self.format_datetime(article.date_updated),
-                'product': article.product_id
+                # 'product': article.product_id
             } for article in articles
         ]
 
@@ -62,18 +63,19 @@ class TestCategory (ShopAPITestCase) :
 #pour pouvoir l'utiliser plus facilement dans chacun de nos tests
     url = reverse_lazy('category-list')
 
-    # def test_detail(self):
-    #     # Nous utilisons l'url de détail
-    #     url_detail = reverse('category-detail',kwargs={'pk': self.category.pk})
-    #     response = self.client.get(url_detail)
-    #     # Nous vérifions également le status code de retour ainsi que les données reçues
-    #     self.assertEqual(response.status_code, 200)
-    #     excepted = {
-    #         'id': self.category.pk,
-    #         'name': self.category.name,
-    #         'products': self.get_product_list_data(self.category.products.filter(active=True)),
-    #     }
-    #     self.assertEqual(excepted, response.json())
+    def test_detail(self):
+        # Nous utilisons l'url de détail
+        url_detail = reverse('category-detail',kwargs={'pk': self.category.pk})
+        response = self.client.get(url_detail)
+        # Nous vérifions également le status code de retour ainsi que les données reçues
+        self.assertEqual(response.status_code, 200)
+        excepted = {
+            'id': self.category.pk,
+            'name': self.category.name,
+            'active': self.category.active,
+            'products': self.get_product_list_data(self.category.products.filter(active=True)),
+        }
+        self.assertEqual(excepted, response.json())
 
     def test_list(self):
         #on réalise l'appel en GET en utilisant le client de la classe de
@@ -84,7 +86,8 @@ class TestCategory (ShopAPITestCase) :
         self.assertEqual(response.status_code, 200)
         #Nous vérifions que la réponse renvoyé correspond bien
         #aux données que nous affichons côté front
-        self.assertEqual(response.json()['results'], self.get_category_list_data([self.category, self.category_2]))
+        # self.assertEqual(response.json()['results'], self.get_category_list_data([self.category, self.category_2]))
+        self.assertEqual(response.json()['results'], self.get_category_list_data([self.category]))
 
 
     def test_create(self):
@@ -114,7 +117,7 @@ class TestProduct (ShopAPITestCase):
         self.assertEqual(response.status_code, 200)
         #Nous vérifions que la réponse renvoyé correspond bien
         #aux données que nous affichons côté front
-        self.assertEqual(response.json()['results'], self.get_product_list_data([self.product, self.product_2]))
+        self.assertEqual(response.json()['results'], self.get_product_list_data([self.product]))
 
 
     def test_create(self):

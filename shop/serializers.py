@@ -54,7 +54,7 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
         queryset = instance.products.filter(active = True)
         #Le serializer est créé avec le queryset défini et
         # toujours défini en tant que many=True
-        serializer = ProductSerializer(queryset, many=True)
+        serializer = ProductListSerializer(queryset, many=True)
         #la propriété '.data' est le rendu de notre serializers
         # que nous retournons ici
         return serializer.data
