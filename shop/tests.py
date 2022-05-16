@@ -12,8 +12,8 @@ class ShopAPITestCase (APITestCase):
         cl.category = Category.objects.create(name='Fruits', active=True)
         Category.objects.create(name='Légumes', active=False)
 
-        cl.product = cl.category.products.create(name='Banane', active=True)
-        cl.category.products.create(name='Courgette', active=False)
+        cl.product = cl.category.products.create(name='Ananas', active=True)
+        cl.category.products.create(name='Banane', active=False)
 
         cl.category_2 = Category.objects.create(name='Légumes', active=True)
         cl.product_2 = cl.category_2.products.create(name='Tomate', active=True)
@@ -41,7 +41,7 @@ class ShopAPITestCase (APITestCase):
                 'name': product.name,
                 'active': product.active,
                 #'category': product.category_id,
-                'articles':self.get_article_list_data(product.articles.filter(active=True)),
+                # 'articles':self.get_article_list_data(product.articles.filter(active=True)),
             } for product in products
         ]
 
@@ -49,11 +49,11 @@ class ShopAPITestCase (APITestCase):
         return [
             {
                 'id': category.id,
-                'date_created': self.format_datetime(category.date_created),
-                'date_updated': self.format_datetime(category.date_updated),
+                # 'date_created': self.format_datetime(category.date_created),
+                # 'date_updated': self.format_datetime(category.date_updated),
                 'name': category.name,
                 'active': category.active,
-                'products':self.get_product_list_data(category.products.filter(active=True)),
+                # 'products':self.get_product_list_data(category.products.filter(active=True)),
             } for category in categories
         ]
 
@@ -61,6 +61,19 @@ class TestCategory (ShopAPITestCase) :
 #Nous stockons l'url de l'endpoint dans un attribut de classe
 #pour pouvoir l'utiliser plus facilement dans chacun de nos tests
     url = reverse_lazy('category-list')
+
+    # def test_detail(self):
+    #     # Nous utilisons l'url de détail
+    #     url_detail = reverse('category-detail',kwargs={'pk': self.category.pk})
+    #     response = self.client.get(url_detail)
+    #     # Nous vérifions également le status code de retour ainsi que les données reçues
+    #     self.assertEqual(response.status_code, 200)
+    #     excepted = {
+    #         'id': self.category.pk,
+    #         'name': self.category.name,
+    #         'products': self.get_product_list_data(self.category.products.filter(active=True)),
+    #     }
+    #     self.assertEqual(excepted, response.json())
 
     def test_list(self):
         #on réalise l'appel en GET en utilisant le client de la classe de
@@ -77,13 +90,13 @@ class TestCategory (ShopAPITestCase) :
     def test_create(self):
         #Nous vérifions qu'aucune catégorie n'existe avant de tenter d'en
         #créer une
+        category_count = Category.objects.count()
         response = self.client.post(self.url, data={'name': 'Nouvelle catégorie'})
         #Vérifions que le status code est bien en erreur et nous empèche
         #de créer une nouvelle catégorie
         self.assertEqual(response.status_code, 405)
         #Enfin, vérifions qu'aucune nouvelle catégorie n'a été créer malgré
         #le status code 405
-        category_count = Category.objects.count()
         self.assertEqual(Category.objects.count(), category_count)
 
 #Nouvelle class de test pour la classe Product
@@ -107,13 +120,13 @@ class TestProduct (ShopAPITestCase):
     def test_create(self):
         #Nous vérifions qu'aucune catégorie n'existe avant de tenter d'en
         #créer une
+        product_count = Product.objects.count()
         response = self.client.post(self.url, data={'name': 'Nouvelle catégorie'})
         #Vérifions que le status code est bien en erreur et nous empèche
         #de créer une nouvelle catégorie
         self.assertEqual(response.status_code, 405)
         #Enfin, vérifions qu'aucune nouvelle catégorie n'a été créer malgré
         #le status code 405
-        product_count = Product.objects.count()
         self.assertEqual(Product.objects.count(), product_count)
 
     def test_list_filter(self):

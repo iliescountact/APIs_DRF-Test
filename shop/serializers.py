@@ -9,16 +9,29 @@ class ArticleSerializer(ModelSerializer):
         fields = ["id", "name", "active"]
         # read_only_fields = ['price']
 
-class ProductSerializer(ModelSerializer):
-    # Nous redéfinissons l'attribut 'product' qui porte le même nom que dans la liste des champs à afficher
-    # en lui précisant un serializer paramétré à 'many=True' car les produits sont multiples pour une catégorie
+class ProductListSerializer(ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["id", "name", "active"]
+
+class ProductDetailSerializer(ModelSerializer):
+    # Nous redéfinissons l'attribut 'product' qui porte le même nom que dans
+    # la liste des champs à afficher
+    # en lui précisant un serializer paramétré à 'many=True' car les produits
+    # sont multiples pour une catégorie
     articles = ArticleSerializer(many=True)
     class Meta:
         model = Product
         fields = ["id", "name", "active", "articles"]
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'active']
+
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
 
 #On utilise un serializerMethodeField, pour ajouter des
 #filtres sur cet appel URL il est nécessaire
@@ -28,7 +41,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'date_created', 'date_updated', 'name', 'active', 'products']
+        fields = ['id', 'name', 'active','products']
 
     def get_products(self, instance):
         #Le paramètre 'instance' est l'instance de la catégorie
