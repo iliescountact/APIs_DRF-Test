@@ -1,7 +1,12 @@
+#Nous avons besoin d'importer mock si nous faisons des mocks tests
 from django.urls import reverse_lazy, reverse
 from rest_framework.test import APITestCase
+from unittest import mock
 
 from shop.models import Category, Product
+
+#Ne pas oublier d'importer mock et la valeur atendue de notre mocks
+from shop.mocks import mock_openfoodfact_success, ECOSCORE_GRADE
 
 class ShopAPITestCase (APITestCase):
 
@@ -41,6 +46,7 @@ class ShopAPITestCase (APITestCase):
                 'id': product.id,
                 'name': product.name,
                 'active': product.active,
+                'ecoscore': ECOSCORE_GRADE,
                 #'category': product.category_id,
                 # 'articles':self.get_article_list_data(product.articles.filter(active=True)),
             } for product in products
@@ -58,6 +64,15 @@ class ShopAPITestCase (APITestCase):
                 # 'products':self.get_product_list_data(category.products.filter(active=True)),
             } for category in categories
         ]
+
+    def get_product_detail_data (self, product):
+#Modifions les données attenues pour le détail d'un produit en ajoutant l'écoscore
+        return {
+            'id': product.id,
+            'name': product.name,
+            'active': product.active,
+            'ecoscore': ECOSCORE_GRADE  # la valeur de l'ecoscore provient de notre constante utilisée dans notre mock
+        }
 
 class TestCategory (ShopAPITestCase) :
 #Nous stockons l'url de l'endpoint dans un attribut de classe
@@ -109,6 +124,10 @@ class TestProduct (ShopAPITestCase):
 #pour pouvoir l'utiliser plus facilement dans chacun de nos tests
     url = reverse_lazy('product-list')
 
+
+    @mock.patch('shop.models.Product.call_external_api', mock_openfoodfact_success)
+    # #Le premier paramètre est la méthode à mocker
+    # #Le second est le mock à appliquer
     def test_list(self):
         #on réalise l'appel en GET en utilisant le client de la classe de
         #tests
@@ -133,6 +152,7 @@ class TestProduct (ShopAPITestCase):
         #le status code 405
         self.assertEqual(Product.objects.count(), product_count)
 
+    @mock.patch('shop.models.Product.call_external_api', mock_openfoodfact_success)
     def test_list_filter(self):
         response = self.client.get(self.url + '?category_id=%i' % self.category.id)
         self.assertEqual(response.status_code, 200)

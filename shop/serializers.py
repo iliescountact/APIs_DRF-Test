@@ -32,7 +32,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ["id", "name", "active"]
+        fields = ["id", "name", "active", 'ecoscore']
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     # Nous redéfinissons l'attribut 'product' qui porte le même nom que dans
