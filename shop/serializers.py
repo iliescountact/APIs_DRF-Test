@@ -1,20 +1,40 @@
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 
 from shop.models import Category, Product, Article
 
-class ArticleSerializer(ModelSerializer):
+class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
-        fields = ["id", "name", "active"]
-        # read_only_fields = ['price']
+        fields = ["id", "name", "active", "price", 'product']
 
-class ProductListSerializer(ModelSerializer):
+    def validate_price(self,  value):
+        #nous vérifions que l'arctile a un prix supérieur à1$
+        if value <= 1.0:
+        #En cas d'erreur, DRF nous met à disposition l'exception ValidationError
+            raise serializers.ValidationError("Article is less than 1$")
+        return value
+
+    def validate_active(self, value):
+        #nous vérifions que l'article renseigné est activé
+        if value==False:
+        #En cas d'erreur, DRF nous met à disposition l'exception ValidationError
+            raise serializers.ValidationError("Article must be activate to create new article")
+        return value
+
+    def validate_product(self, value):
+    #cette fonction fait le controle de la présence du nom dans la description
+        if value.active is False :
+        # On fait apparaitre une ValidationError si ce n'est pas le cas
+            raise serializers.ValidationError("Inactive product")
+        return value
+
+
+class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ["id", "name", "active"]
 
-class ProductDetailSerializer(ModelSerializer):
+class ProductDetailSerializer(serializers.ModelSerializer):
     # Nous redéfinissons l'attribut 'product' qui porte le même nom que dans
     # la liste des champs à afficher
     # en lui précisant un serializer paramétré à 'many=True' car les produits
@@ -23,6 +43,11 @@ class ProductDetailSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = ["id", "name", "active", "articles"]
+
+    def get_articles(self, instance):
+        queryset = instance.articles.filter(active=True)
+        serializer = ArticleSerializer(queryset, many=True)
+        return serializer.data
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
