@@ -29,6 +29,8 @@ router_article.register('article', ArticleViewset, basename='article')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+# path('api-auth/', include('rest_framework.urls')),
+
 
 #il faut bien penser à ajouter les urls du router dans la liste des urls
 #disponibles
