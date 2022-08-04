@@ -2,3 +2,4 @@
 .idea
 *.sqlite3
 __pycache__/
+project/test_ignore.py
